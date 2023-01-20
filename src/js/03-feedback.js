@@ -1,3 +1,4 @@
+const throttle = require('lodash.throttle');
 const feedbackFormEl = document.querySelector('.feedback-form');
 const userInfo = {};
 
@@ -30,6 +31,7 @@ fillFeedbackFormFields();
 const onFeedbackFormInput = event => {
   const { target } = event;
   //   console.log(feedbackFormEl);
+  console.log('Input 500ms');
   const name = target.name;
   const value = target.value;
 
@@ -61,5 +63,9 @@ const onFeedbackFormSubmit = event => {
   //   console.log('Submit');
 };
 
-feedbackFormEl.addEventListener('input', onFeedbackFormInput);
-feedbackFormEl.addEventListener('submit', onFeedbackFormSubmit);
+feedbackFormEl.addEventListener('input', throttle(onFeedbackFormInput, 500));
+feedbackFormEl.addEventListener('submit', throttle(onFeedbackFormSubmit, 500));
+
+// const throttledOnDocumentInput = _.throttle(onDocumentScroll, 300);
+
+// document.addEventListener('scroll', throttledOnDocumentScroll);
