@@ -19,15 +19,4 @@ const onTimeUpdate = function (data) {
 
 player.on('timeupdate', throttle(onTimeUpdate, 1000));
 
-player
-  .setCurrentTime(timeToResume)
-  .then(function (seconds) {})
-  .catch(function (error) {
-    switch (error.name) {
-      case 'RangeError':
-        break;
-
-      default:
-        break;
-    }
-  });
+if (timeToResume !== null) player.setCurrentTime(timeToResume);
