@@ -31,7 +31,7 @@ fillFeedbackFormFields();
 const onFeedbackFormInput = event => {
   const { target } = event;
   //   console.log(feedbackFormEl);
-  console.log('Input 500ms');
+  // console.log('Input 500ms');
   const name = target.name;
   const value = target.value;
 
@@ -57,15 +57,9 @@ const onFeedbackFormSubmit = event => {
     console.log(err);
   }
 
-  //   console.log(userInfo);
   feedbackFormEl.reset();
   localStorage.removeItem('feedback-form-state');
-  //   console.log('Submit');
 };
 
 feedbackFormEl.addEventListener('input', throttle(onFeedbackFormInput, 500));
 feedbackFormEl.addEventListener('submit', throttle(onFeedbackFormSubmit, 500));
-
-// const throttledOnDocumentInput = _.throttle(onDocumentScroll, 300);
-
-// document.addEventListener('scroll', throttledOnDocumentScroll);
