@@ -1,65 +1,46 @@
+const LOCALSTORAGE_KEY = 'feedback-form-state';
 const throttle = require('lodash.throttle');
 const feedbackFormEl = document.querySelector('.feedback-form');
-const userInfo = {};
 
-const fillFeedbackFormFields = () => {
-  try {
-    const userInfofromLS = JSON.parse(
-      localStorage.getItem('feedback-form-state')
-    );
-
-    if (userInfofromLS === null) {
-      return;
-    }
-
-    // console.log(userInfofromLS);
-
-    for (const property in userInfofromLS) {
-      //   console.log(property);
-      //   console.log(userInfofromLS[property]);
-      feedbackFormEl.elements[property].value = userInfofromLS[property];
-    }
-
-    //   console.dir(feedbackFormEl);
-  } catch (err) {
-    console.log(err);
-  }
-};
-
-fillFeedbackFormFields();
-
-const onFeedbackFormInput = event => {
-  const { target } = event;
-  //   console.log(feedbackFormEl);
-  // console.log('Input 500ms');
-  const name = target.name;
-  const value = target.value;
-
-  userInfo[name] = value;
-
-  localStorage.setItem('feedback-form-state', JSON.stringify(userInfo));
-};
+initForm();
 
 const onFeedbackFormSubmit = event => {
   event.preventDefault();
+  const formData = new FormData(feedbackFormEl);
 
-  try {
-    const userInfofromLS = JSON.parse(
-      localStorage.getItem('feedback-form-state')
-    );
+  const submittedData = {};
+  formData.forEach((value, name) => {
+    value = value.trim();
+    if (value) submittedData[name] = value;
+  });
 
-    if (userInfofromLS === null) {
-      return;
-    }
-
-    console.log(userInfofromLS);
-  } catch (err) {
-    console.log(err);
+  if (Object.values(submittedData).length !== 2) {
+    alert('Усі поля мать бути заповнені');
+    return;
+  } else {
+    console.log(submittedData);
+    feedbackFormEl.reset();
+    localStorage.removeItem(LOCALSTORAGE_KEY);
   }
-
-  feedbackFormEl.reset();
-  localStorage.removeItem('feedback-form-state');
 };
 
+const onFeedbackFormInput = event => {
+  let savedClientInput = localStorage.getItem(LOCALSTORAGE_KEY);
+  savedClientInput = savedClientInput ? JSON.parse(savedClientInput) : {};
+  savedClientInput[event.target.name] = event.target.value;
+  localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(savedClientInput));
+};
+
+function initForm() {
+  let savedClientInput = localStorage.getItem(LOCALSTORAGE_KEY);
+  if (savedClientInput) {
+    savedClientInput = JSON.parse(savedClientInput);
+    Object.entries(savedClientInput).forEach(([name, value]) => {
+      feedbackFormEl.elements[name].value = value;
+    });
+  }
+}
+
 feedbackFormEl.addEventListener('input', throttle(onFeedbackFormInput, 500));
+
 feedbackFormEl.addEventListener('submit', throttle(onFeedbackFormSubmit, 500));
